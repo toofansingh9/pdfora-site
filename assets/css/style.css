@@ -302,3 +302,10 @@ body.nav-tight .menu-btn { display: block; }
   .row2 { grid-template-columns: 1fr; }
   .head-cta a[href*="pricing"] { display: none; }
 }
+
+/* ---- crawlable language links (footer) ---- */
+.lang-links { margin-top: 26px; padding-top: 18px; border-top: 1px solid #232b38; font-size: .82rem; line-height: 2; }
+.lang-links .ll-label { color: #fff; font-weight: 600; margin-right: 10px; }
+.lang-links a { color: #8e9bb0; margin-right: 14px; white-space: nowrap; }
+.lang-links a:hover { color: #fff; }
+.lang-links a.cur { color: #fff; font-weight: 600; }
