@@ -1,0 +1,4 @@
+# PDFora — pre-built static site. Netlify just publishes the repo root.
+[build]
+  publish = "."
+  command = ""
