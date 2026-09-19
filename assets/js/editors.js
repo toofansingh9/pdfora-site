@@ -8,6 +8,7 @@
   const API = window.PDFTOOLS;
   const H = API.helpers;
   const el = H.el;
+  const T = H.T, TF = H.TF;
   const PL = () => H.PDFLib;
 
   function dataURLtoBytes(url) {
@@ -21,13 +22,13 @@
     root.innerHTML = "";
     const panel = el("div", { class: "panel" });
     const drop = el("div", { class: "drop" });
-    drop.innerHTML = '<div class="ico">📄</div><div class="big">Drop ' + (label || "a PDF") +
-      ' here</div><small>or click to choose · runs privately in your browser</small>';
+    drop.innerHTML = '<div class="ico">📄</div><div class="big">' + TF("Drop {what} here", { what: T(label || "a PDF") }) +
+      "</div><small>" + T("or click to choose · runs privately in your browser") + "</small>";
     const input = el("input", { type: "file", accept: "application/pdf", style: "display:none" });
     drop.appendChild(input); panel.appendChild(drop); root.appendChild(panel);
     const handle = async (file) => {
-      try { drop.querySelector("small").textContent = "Loading engine…"; await H.loadLibs(); }
-      catch (e) { drop.querySelector("small").textContent = "Could not load the PDF engine — check your connection."; return; }
+      try { drop.querySelector("small").textContent = T("Loading engine…"); await H.loadLibs(); }
+      catch (e) { drop.querySelector("small").textContent = T("Could not load the PDF engine — check your connection."); return; }
       onFile(file);
     };
     ["mouseenter", "dragenter", "touchstart"].forEach((ev) =>
@@ -103,13 +104,13 @@
   function signatureModal(onDone) {
     const back = el("div", { class: "sig-back" });
     back.innerHTML =
-      '<div class="sig-box"><h3>Add your signature</h3>' +
-      '<div class="sig-tabs"><button class="ed-btn on" data-t="draw">✍️ Draw</button><button class="ed-btn" data-t="type">⌨️ Type</button></div>' +
+      '<div class="sig-box"><h3>' + T("Add your signature") + '</h3>' +
+      '<div class="sig-tabs"><button class="ed-btn on" data-t="draw">✍️ ' + T("Draw") + '</button><button class="ed-btn" data-t="type">⌨️ ' + T("Type") + '</button></div>' +
       '<canvas class="sig-pad" width="420" height="170"></canvas>' +
-      '<input class="sig-type" placeholder="Your name" style="display:none">' +
-      '<div class="sig-actions"><button class="ed-btn" data-a="cancel">Cancel</button>' +
-      '<button class="ed-btn" data-a="clear">Clear</button>' +
-      '<button class="ed-btn primary" data-a="ok">Insert</button></div></div>';
+      '<input class="sig-type" placeholder="' + T("Your name") + '" style="display:none">' +
+      '<div class="sig-actions"><button class="ed-btn" data-a="cancel">' + T("Cancel") + '</button>' +
+      '<button class="ed-btn" data-a="clear">' + T("Clear") + '</button>' +
+      '<button class="ed-btn primary" data-a="ok">' + T("Insert") + '</button></div></div>';
     document.body.appendChild(back);
     const pad = back.querySelector(".sig-pad"), typer = back.querySelector(".sig-type");
     const ctx = pad.getContext("2d"); ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.strokeStyle = "#12233f";
@@ -145,14 +146,14 @@
     uploader(root, (file) => buildEditor(root, file, mode), mode === "sign" ? "a PDF to fill & sign" : "a PDF to edit");
   }
   async function buildEditor(root, file, mode) {
-    root.innerHTML = '<div class="ed-hint">Loading pages…</div>';
+    root.innerHTML = '<div class="ed-hint">' + T("Loading pages…") + "</div>";
     let cur = "move", color = "#111111", size = 18;
     const tb = el("div", { class: "ed-toolbar" });
     const pages = el("div", { class: "ed-pages" });
     const status = el("span", { class: "status" });
     root.innerHTML = ""; root.appendChild(tb); root.appendChild(pages);
 
-    const tools = [["move", "🖐 Move"], ["text", "🔤 Text"], ["sign", "✍️ Signature"], ["image", "🖼 Image"], ["draw", "🖊 Draw"], ["white", "▭ Whiteout"]];
+    const tools = [["move", "🖐 " + T("Move")], ["text", "🔤 " + T("Text")], ["sign", "✍️ " + T("Signature")], ["image", "🖼 " + T("Image")], ["draw", "🖊 " + T("Draw")], ["white", "▭ " + T("Whiteout")]];
     const btns = {};
     tools.forEach(([k, label]) => {
       const b = el("button", { class: "ed-btn" }, label);
@@ -161,18 +162,18 @@
     });
     btns.move.classList.add("on");
     tb.appendChild(el("span", { class: "ed-sep" }));
-    const colorIn = el("input", { type: "color", value: color, title: "Colour" });
+    const colorIn = el("input", { type: "color", value: color, title: T("Colour") });
     colorIn.addEventListener("input", () => { color = colorIn.value; });
-    const sizeIn = el("input", { type: "number", value: size, min: 6, max: 96, title: "Text size" });
+    const sizeIn = el("input", { type: "number", value: size, min: 6, max: 96, title: T("Text size") });
     sizeIn.addEventListener("input", () => { size = parseInt(sizeIn.value, 10) || 18; });
     tb.appendChild(colorIn); tb.appendChild(sizeIn);
     tb.appendChild(el("span", { class: "ed-sep" }));
-    const saveBtn = el("button", { class: "ed-btn primary" }, "⬇ Save PDF");
+    const saveBtn = el("button", { class: "ed-btn primary" }, "⬇ " + T("Save PDF"));
     tb.appendChild(saveBtn); tb.appendChild(status);
 
     let metas;
     try { const r = await loadPages(file, pages); metas = r.metas; }
-    catch (e) { root.innerHTML = '<div class="panel center"><p class="status err">Could not render this PDF: ' + (e.message || e) + "</p></div>"; return; }
+    catch (e) { root.innerHTML = '<div class="panel center"><p class="status err">' + T("Could not render this PDF:") + " " + T(e.message || String(e)) + "</p></div>"; return; }
 
     metas.forEach((m) => wirePage(m));
 
@@ -188,7 +189,7 @@
           const t = el("div", { class: "ed-el text", contenteditable: "true" });
           t.dataset.type = "text"; t.dataset.color = color; t.dataset.size = size;
           t.style.color = color; t.style.fontSize = size + "px";
-          t.textContent = "Text";
+          t.textContent = T("Text");
           addEl(m.overlay, t, p.x, p.y);
           setTimeout(() => { t.focus(); document.execCommand && document.getSelection().selectAllChildren(t); }, 10);
         } else if (cur === "sign") {
@@ -229,7 +230,7 @@
     }
 
     saveBtn.addEventListener("click", async () => {
-      saveBtn.disabled = true; status.textContent = "Saving…"; status.className = "status";
+      saveBtn.disabled = true; status.textContent = T("Saving…"); status.className = "status";
       try {
         const { PDFDocument } = PL();
         const buf = await H.readBuf(file);
@@ -256,8 +257,8 @@
           page.drawImage(png, { x: 0, y: 0, width: m.ptsW, height: m.ptsH });
         }
         H.download(await doc.save(), baseName(file.name) + (mode === "sign" ? "-signed.pdf" : "-edited.pdf"));
-        status.textContent = "Saved ✓"; status.className = "status ok";
-      } catch (e) { status.textContent = e.message || "Save failed"; status.className = "status err"; }
+        status.textContent = T("Saved ✓"); status.className = "status ok";
+      } catch (e) { status.textContent = T(e.message || "Save failed"); status.className = "status err"; }
       finally { saveBtn.disabled = false; }
     });
   }
@@ -265,27 +266,27 @@
   /* ---------- CREATE FORMS ---------- */
   function mountForms(root) { uploader(root, (file) => buildForms(root, file), "a PDF to add form fields"); }
   async function buildForms(root, file) {
-    root.innerHTML = '<div class="ed-hint">Loading pages…</div>';
+    root.innerHTML = '<div class="ed-hint">' + T("Loading pages…") + "</div>";
     let cur = "text";
     const tb = el("div", { class: "ed-toolbar" });
     const pages = el("div", { class: "ed-pages" });
     const status = el("span", { class: "status" });
     root.innerHTML = "";
-    root.appendChild(el("div", { class: "ed-hint" }, "Click on a page to drop a field. Drag to move, drag the corner to resize."));
+    root.appendChild(el("div", { class: "ed-hint" }, T("Click on a page to drop a field. Drag to move, drag the corner to resize.")));
     root.appendChild(tb); root.appendChild(pages);
     const btns = {};
-    [["text", "🔤 Text field"], ["checkbox", "☑ Checkbox"], ["move", "🖐 Move"]].forEach(([k, l]) => {
+    [["text", "🔤 " + T("Text field")], ["checkbox", "☑ " + T("Checkbox")], ["move", "🖐 " + T("Move")]].forEach(([k, l]) => {
       const b = el("button", { class: "ed-btn" }, l);
       b.addEventListener("click", () => { cur = k; Object.values(btns).forEach((x) => x.classList.remove("on")); b.classList.add("on"); });
       btns[k] = b; tb.appendChild(b);
     });
     btns.text.classList.add("on");
-    const saveBtn = el("button", { class: "ed-btn primary" }, "⬇ Save form");
+    const saveBtn = el("button", { class: "ed-btn primary" }, "⬇ " + T("Save form"));
     tb.appendChild(saveBtn); tb.appendChild(status);
 
     let metas;
     try { metas = (await loadPages(file, pages)).metas; }
-    catch (e) { root.innerHTML = '<div class="panel center"><p class="status err">Could not render this PDF.</p></div>'; return; }
+    catch (e) { root.innerHTML = '<div class="panel center"><p class="status err">' + T("Could not render this PDF.") + "</p></div>"; return; }
 
     metas.forEach((m) => {
       m.overlay.addEventListener("pointerdown", (e) => {
@@ -295,7 +296,7 @@
         const y = (e.clientY - r.top) * m.overlay.offsetHeight / r.height - 14;
         const node = el("div", { class: "field" });
         node.dataset.type = cur === "checkbox" ? "checkbox" : "textfield";
-        node.textContent = cur === "checkbox" ? "☑" : "Text field";
+        node.textContent = cur === "checkbox" ? "☑" : T("Text field");
         node.style.width = (cur === "checkbox" ? 26 : 130) + "px";
         node.style.height = (cur === "checkbox" ? 26 : 28) + "px";
         addEl(m.overlay, node, Math.max(0, x), Math.max(0, y), { resizable: true });
@@ -303,7 +304,7 @@
     });
 
     saveBtn.addEventListener("click", async () => {
-      saveBtn.disabled = true; status.textContent = "Saving…"; status.className = "status";
+      saveBtn.disabled = true; status.textContent = T("Saving…"); status.className = "status";
       try {
         const { PDFDocument } = PL();
         const doc = await PDFDocument.load(await H.readBuf(file));
@@ -322,7 +323,7 @@
         if (!n) throw new Error("Add at least one field first.");
         H.download(await doc.save(), baseName(file.name) + "-form.pdf");
         status.textContent = n + " fields added ✓"; status.className = "status ok";
-      } catch (e) { status.textContent = e.message || "Save failed"; status.className = "status err"; }
+      } catch (e) { status.textContent = T(e.message || "Save failed"); status.className = "status err"; }
       finally { saveBtn.disabled = false; }
     });
   }
@@ -346,20 +347,20 @@
     const steps = [];
     root.innerHTML = "";
     const panel = el("div", { class: "panel" });
-    panel.appendChild(el("h3", {}, "Build a workflow"));
+    panel.appendChild(el("h3", {}, T("Build a workflow")));
     panel.appendChild(el("p", { class: "muted", style: "margin-top:-6px" },
-      "Chain tools to run one after another on a PDF. Each step uses that tool's default settings."));
+      T("Chain tools to run one after another on a PDF. Each step uses that tool's default settings.")));
     const list = el("div", { class: "wf-steps" });
     const add = el("div", { class: "wf-add" });
     const sel = el("select");
-    sel.appendChild(el("option", { value: "" }, "➕ Add a step…"));
-    Object.keys(WF_TOOLS).forEach((k) => sel.appendChild(el("option", { value: k }, WF_TOOLS[k])));
-    const addBtn = el("button", { class: "ed-btn" }, "Add");
+    sel.appendChild(el("option", { value: "" }, "➕ " + T("Add a step…")));
+    Object.keys(WF_TOOLS).forEach((k) => sel.appendChild(el("option", { value: k }, T(WF_TOOLS[k]))));
+    const addBtn = el("button", { class: "ed-btn" }, T("Add"));
     add.appendChild(sel); add.appendChild(addBtn);
     panel.appendChild(list); panel.appendChild(add);
 
     const drop = el("div", { class: "drop", style: "margin-top:18px" });
-    drop.innerHTML = '<div class="ico">📄</div><div class="big">Drop a PDF to run the workflow</div><small>runs privately in your browser</small>';
+    drop.innerHTML = '<div class="ico">📄</div><div class="big">' + T("Drop a PDF to run the workflow") + "</div><small>" + T("runs privately in your browser") + "</small>";
     const input = el("input", { type: "file", accept: "application/pdf", style: "display:none" });
     drop.appendChild(input); panel.appendChild(drop);
     const runInfo = el("div", { class: "status", style: "display:block;margin-top:12px;text-align:center" });
@@ -388,22 +389,22 @@
     drop.addEventListener("drop", (e) => { if (e.dataTransfer.files[0]) runWorkflow(e.dataTransfer.files[0]); });
 
     async function runWorkflow(file) {
-      if (!steps.length) { runInfo.textContent = "Add at least one step first."; runInfo.className = "status err"; return; }
-      try { runInfo.textContent = "Loading engine…"; runInfo.className = "status"; await H.loadLibs(); }
-      catch (e) { runInfo.textContent = "Could not load the PDF engine — check your connection."; runInfo.className = "status err"; return; }
+      if (!steps.length) { runInfo.textContent = T("Add at least one step first."); runInfo.className = "status err"; return; }
+      try { runInfo.textContent = T("Loading engine…"); runInfo.className = "status"; await H.loadLibs(); }
+      catch (e) { runInfo.textContent = T("Could not load the PDF engine — check your connection."); runInfo.className = "status err"; return; }
       let current = file;
       try {
         for (let i = 0; i < steps.length; i++) {
           const slug = steps[i];
-          runInfo.textContent = "Step " + (i + 1) + "/" + steps.length + ": " + WF_TOOLS[slug] + "…"; runInfo.className = "status";
+          runInfo.textContent = TF("Step {i}/{n}: {tool}…", { i: i + 1, n: steps.length, tool: T(WF_TOOLS[slug]) }); runInfo.className = "status";
           const ctx = { files: [current], entries: [{ file: current }], opts: defaultOpts(slug), h: H, progress: () => {}, status: () => {} };
           const out = await API.tools[slug].run(ctx);
-          if (!out || !out.blob) throw new Error(WF_TOOLS[slug] + " did not produce a single file.");
+          if (!out || !out.blob) throw new Error(TF("{tool} did not produce a single file.", { tool: T(WF_TOOLS[slug]) }));
           current = new File([out.blob], "step" + i + ".pdf", { type: "application/pdf" });
         }
         H.download(current, baseName(file.name) + "-workflow.pdf");
-        runInfo.textContent = "Done ✓ — " + steps.length + " steps applied."; runInfo.className = "status ok";
-      } catch (e) { runInfo.textContent = e.message || "Workflow failed"; runInfo.className = "status err"; }
+        runInfo.textContent = TF("Done ✓ — {n} steps applied.", { n: steps.length }); runInfo.className = "status ok";
+      } catch (e) { runInfo.textContent = T(e.message || "Workflow failed"); runInfo.className = "status err"; }
     }
   }
 

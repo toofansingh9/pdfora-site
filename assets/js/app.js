@@ -7,6 +7,11 @@
 (function () {
   "use strict";
 
+  /* ---------- i18n: UI strings are written in English and looked up in
+     window.PDFORA_T (assets/i18n/<lang>.js) on translated pages ---------- */
+  const T = (s) => (s == null ? s : ((window.PDFORA_T && window.PDFORA_T[s]) || s));
+  const TF = (tpl, vars) => T(tpl).replace(/\{(\w+)\}/g, (_, k) => (vars && k in vars ? vars[k] : "{" + k + "}"));
+
   /* ---------- tiny helpers ---------- */
   const $ = (s, r = document) => r.querySelector(s);
   const el = (tag, attrs = {}, html) => {
@@ -96,6 +101,7 @@
   }
 
   API.helpers = {
+    T, TF,
     $, el, fmtBytes, download, readBuf, parseRanges, renderPage, loadLibs,
     get PDFLib() { return window.PDFLib; },
     get pdfjs() { return window.pdfjsLib; },
@@ -131,16 +137,15 @@
     // server-only notice
     if (def.engine === "server") {
       panel.appendChild(el("div", { class: "privacy-note", html:
-        "🌐 This tool converts your file through a secure online service. Larger files may take a little longer." }));
+        "🌐 " + T("This tool converts your file through a secure online service. Larger files may take a little longer.") }));
     }
 
     // dropzone
     const accept = def.accept || "application/pdf";
     const drop = el("div", { class: "drop" });
     drop.innerHTML =
-      '<div class="ico">📄</div><div class="big">Drop ' +
-      (def.fileLabel || "PDF files") + " here</div>" +
-      '<small>or click to choose · everything runs privately in your browser</small>';
+      '<div class="ico">📄</div><div class="big">' + TF("Drop {what} here", { what: T(def.fileLabel || "PDF files") }) + "</div>" +
+      "<small>" + T("or click to choose · everything runs privately in your browser") + "</small>";
     const input = el("input", { type: "file", accept, style: "display:none" });
     if (def.multiple !== false) input.setAttribute("multiple", "");
     drop.appendChild(input);
@@ -170,7 +175,7 @@
 
     // actions
     const actions = el("div", { class: "actions", id: "actions", style: "display:none" });
-    const runBtn = el("button", { class: "btn lg", id: "runbtn" }, def.cta || "Process");
+    const runBtn = el("button", { class: "btn lg", id: "runbtn" }, T(def.cta || "Process"));
     const status = el("span", { class: "status", id: "status" });
     actions.appendChild(runBtn); actions.appendChild(status);
     panel.appendChild(actions);
@@ -190,8 +195,8 @@
     const def = state.def;
     let arr = Array.prototype.slice.call(fileList || []);
     if (!arr.length) return;
-    try { setStatus("Loading…"); await API.helpers.loadLibs(); setStatus(""); }
-    catch (e) { setStatus("Could not load the PDF engine — check your connection and retry.", "err"); return; }
+    try { setStatus(T("Loading…")); await API.helpers.loadLibs(); setStatus(""); }
+    catch (e) { setStatus(T("Could not load the PDF engine — check your connection and retry."), "err"); return; }
     if (def.multiple === false) { state.files = []; arr = arr.slice(0, 1); }
     arr.forEach((f) => state.files.push({ file: f, id: Math.random().toString(36).slice(2) }));
     renderFiles();
@@ -211,7 +216,7 @@
         (state.def.reorder ? '<span class="handle">⋮⋮</span>' : "") +
         '<span class="fic">' + ext + "</span>" +
         '<span class="meta"><b></b><small>' + fmtBytes(f.size) + "</small></span>" +
-        '<button class="rm" title="Remove">×</button>';
+        '<button class="rm" title="' + T("Remove") + '">×</button>';
       row.querySelector("b").textContent = f.name;
       row.querySelector(".rm").addEventListener("click", () => {
         state.files.splice(i, 1); renderFiles();
@@ -269,15 +274,15 @@
     fields.forEach((f) => {
       if (f.type === "radio") {
         const wrap = el("div", { class: "field" });
-        if (f.label) wrap.appendChild(el("label", {}, f.label));
+        if (f.label) wrap.appendChild(el("label", {}, T(f.label)));
         const row = el("div", { class: "radio-row" });
         f.options.forEach((o, idx) => {
           const checked = (f.default ? f.default === o.value : idx === 0);
           const card = el("label", { class: "radio-card" + (checked ? " sel" : "") });
           card.innerHTML =
             '<b><input type="radio" name="' + f.name + '" value="' + o.value + '"' +
-            (checked ? " checked" : "") + ">" + o.label + "</b>" +
-            (o.hint ? "<span>" + o.hint + "</span>" : "");
+            (checked ? " checked" : "") + ">" + T(o.label) + "</b>" +
+            (o.hint ? "<span>" + T(o.hint) + "</span>" : "");
           card.querySelector("input").dataset.opt = f.name;
           card.addEventListener("change", () => {
             row.querySelectorAll(".radio-card").forEach((c) => c.classList.remove("sel"));
@@ -294,22 +299,22 @@
       if (f.type === "checkbox") {
         const lab = el("label", { class: "checkbox" });
         lab.innerHTML = '<input type="checkbox" data-opt="' + f.name + '"' +
-          (f.default ? " checked" : "") + "> " + f.label;
+          (f.default ? " checked" : "") + "> " + T(f.label);
         wrap.appendChild(lab);
       } else {
-        if (f.label) wrap.appendChild(el("label", {}, f.label));
+        if (f.label) wrap.appendChild(el("label", {}, T(f.label)));
         let ctrl;
         if (f.type === "select") {
           ctrl = el("select", { "data-opt": f.name });
           f.options.forEach((o) => {
-            const opt = el("option", { value: o.value }, o.label);
+            const opt = el("option", { value: o.value }, T(o.label));
             if (f.default === o.value) opt.selected = true;
             ctrl.appendChild(opt);
           });
         } else {
           ctrl = el("input", {
             type: f.type || "text", "data-opt": f.name,
-            placeholder: f.placeholder || "",
+            placeholder: T(f.placeholder || ""),
           });
           if (f.default != null) ctrl.value = f.default;
           if (f.min != null) ctrl.min = f.min;
@@ -319,7 +324,7 @@
         wrap.appendChild(ctrl);
         if (f.type === "select") ctrl.addEventListener("change", () => toggleConditionals(container));
       }
-      if (f.hint) wrap.appendChild(el("div", { class: "hint" }, f.hint));
+      if (f.hint) wrap.appendChild(el("div", { class: "hint" }, T(f.hint)));
       container.appendChild(wrap);
     });
     toggleConditionals(container);
@@ -367,11 +372,11 @@
   }
   function setStatus(msg, kind) {
     const s = $("#status"); if (!s) return;
-    s.textContent = msg || ""; s.className = "status" + (kind ? " " + kind : "");
+    s.textContent = T(msg) || ""; s.className = "status" + (kind ? " " + kind : "");
   }
 
   async function runTool(def) {
-    if (!state.files.length) { setStatus("Add a file first.", "err"); return; }
+    if (!state.files.length) { setStatus(T("Add a file first."), "err"); return; }
     const btn = $("#runbtn");
     btn.disabled = true; setStatus(""); setProgress(2);
     $("#result").classList.remove("show");
@@ -384,7 +389,7 @@
       setStatus("");
     } catch (err) {
       console.error(err);
-      setStatus(err.message || "Something went wrong.", "err");
+      setStatus(T(err.message || "Something went wrong."), "err");
     } finally {
       btn.disabled = false;
       setTimeout(() => setProgress(null), 600);
@@ -394,13 +399,13 @@
   function showResult(out, def) {
     const r = $("#result"); r.innerHTML = ""; r.classList.add("show");
     r.appendChild(el("div", { class: "ok-ico" }, "✓"));
-    r.appendChild(el("h3", {}, "Done!"));
-    if (!out) { r.appendChild(el("p", { class: "muted" }, "No output produced.")); return; }
+    r.appendChild(el("h3", {}, T("Done!")));
+    if (!out) { r.appendChild(el("p", { class: "muted" }, T("No output produced."))); return; }
 
     if (out.items && out.items.length) {
       r.appendChild(el("p", { class: "muted" },
-        out.items.length + " files ready."));
-      const dl = el("button", { class: "btn lg" }, "⬇ Download all (.zip)");
+        TF("{n} files ready.", { n: out.items.length })));
+      const dl = el("button", { class: "btn lg" }, "⬇ " + T("Download all (.zip)"));
       dl.addEventListener("click", async () => {
         const zip = new window.JSZip();
         out.items.forEach((it) => zip.file(it.filename, it.blob));
@@ -416,13 +421,13 @@
       });
       r.appendChild(list);
     } else {
-      const note = out.note ? '<p class="muted">' + out.note + "</p>" : "";
+      const note = out.note ? '<p class="muted">' + T(out.note) + "</p>" : "";
       r.insertAdjacentHTML("beforeend", note);
-      const dl = el("button", { class: "btn lg" }, "⬇ Download " + (out.filename || "result"));
+      const dl = el("button", { class: "btn lg" }, "⬇ " + TF("Download {name}", { name: out.filename || T("result") }));
       dl.addEventListener("click", () => download(out.blob, out.filename, out.type || "application/pdf"));
       r.appendChild(dl);
     }
-    const again = el("button", { class: "btn ghost", style: "margin-left:10px" }, "Start over");
+    const again = el("button", { class: "btn ghost", style: "margin-left:10px" }, T("Start over"));
     again.addEventListener("click", () => location.reload());
     r.appendChild(again);
   }

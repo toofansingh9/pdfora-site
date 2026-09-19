@@ -70,7 +70,7 @@
   // shared page board (used by Organize). Renders thumbnails with rotate/delete + drag reorder.
   async function buildBoard(ctx) {
     const board = ctx.board;
-    board.innerHTML = '<p class="muted" style="grid-column:1/-1">Rendering pages…</p>';
+    board.innerHTML = '<p class="muted" style="grid-column:1/-1">' + H.T("Rendering pages…") + "</p>";
     const buf = await H.readBuf(ctx.files[0]);
     const doc = await H.loadPdfjs(buf);
     board.innerHTML = "";
@@ -81,7 +81,7 @@
       const card = H.el("div", { class: "pg", draggable: "true" });
       card.dataset.src = i - 1;
       card.appendChild(canvas);
-      card.appendChild(H.el("div", { class: "n" }, "Page " + i));
+      card.appendChild(H.el("div", { class: "n" }, H.TF("Page {n}", { n: i })));
       const act = H.el("div", { class: "act" });
       const rl = H.el("button", { title: "Rotate left" }, "⟲");
       const rr = H.el("button", { title: "Rotate right" }, "⟳");
@@ -284,8 +284,8 @@
         pg.drawImage(jpg, { x: 0, y: 0, width: vp.width, height: vp.height });
       }
       const bytes = await out.save();
-      const note = "Original " + H.fmtBytes(orig) + " → " + H.fmtBytes(bytes.length) +
-        (bytes.length < orig ? " (" + Math.round((1 - bytes.length / orig) * 100) + "% smaller)" : "");
+      const note = H.TF("Original {a} → {b}", { a: H.fmtBytes(orig), b: H.fmtBytes(bytes.length) }) +
+        (bytes.length < orig ? " (" + H.TF("{p}% smaller", { p: Math.round((1 - bytes.length / orig) * 100) }) + ")" : "");
       return { blob: blobFrom(bytes), filename: baseName(ctx.files[0].name) + "-compressed.pdf", note };
     },
   });
@@ -737,7 +737,7 @@
       }));
       doc.catalog.set(PDFName.of("Outlines"), outlinesRef);
       return { blob: blobFrom(await doc.save()), filename: baseName(ctx.files[0].name) + "-bookmarks.pdf",
-        note: entries.length + " bookmarks added." };
+        note: H.TF("{n} bookmarks added.", { n: entries.length }) };
     },
   });
 
@@ -882,7 +882,7 @@
       }
       return { blob: new Blob([text], { type: "text/plain" }),
         filename: baseName(ctx.files[0].name) + ".txt", type: "text/plain",
-        note: pdf.numPages + " pages extracted." };
+        note: H.TF("{n} pages extracted.", { n: pdf.numPages }) };
     },
   });
 
@@ -905,7 +905,7 @@
       const pdf = await H.loadPdfjs(buf);
       let text = "";
       for (let i = 1; i <= pdf.numPages; i++) {
-        ctx.status("OCR page " + i + " / " + pdf.numPages);
+        ctx.status(H.TF("OCR page {i} / {n}", { i: i, n: pdf.numPages }));
         ctx.progress((i / pdf.numPages) * 95);
         const canvas = await H.renderPage(pdf, i, 2);
         const { data } = await window.Tesseract.recognize(canvas, ctx.opts.lang);
@@ -933,8 +933,8 @@
   function comingSoon(msg) {
     return { multiple: false, engine: "server", cta: "Process", async run() { throw new Error(msg); } };
   }
-  R("protect", comingSoon("Password protection is coming soon (qpdf worker route)."));
-  R("unlock", comingSoon("Password removal is coming soon (qpdf worker route)."));
+  R("protect", comingSoon("Password protection is coming soon."));
+  R("unlock", comingSoon("Password removal is coming soon."));
 
   /* =========================================================================
      SERVER CONVERSIONS — via Cloudflare Worker proxy → CloudConvert.
