@@ -22,7 +22,8 @@ PATTERNS = [
 # editors.js: WF_TOOLS names and uploader() prompts
 EXTRA = [r'^\s*(?:"[\w-]+"|\w+)\s*:\s*' + STR, r'uploader\([^;]*?,\s*' + STR + r'\s*\)',
          r'"a PDF to (?:fill & sign|edit)"']
-PY_HEADINGS = ["How it works", "When to use this tool", "Tips for the best results"]
+PY_HEADINGS = ["How it works", "When to use this tool", "Tips for the best results",
+               "What to know before you start", "A worked example", "Troubleshooting"]
 # fallbacks written as T(x || "…") that the patterns above can't see
 MANUAL = ["PDF files", "a PDF", "Something went wrong.", "Save failed", "Workflow failed",
           "Could not start conversion.", "e.g. 1-3, 4-6", "Pricing",
