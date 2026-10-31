@@ -891,29 +891,68 @@
      ========================================================================= */
   R("ocr", {
     multiple: false, cta: "Run OCR", engine: "client",
-    fields: [{ name: "lang", label: "Language", type: "select", default: "eng",
-      options: [{ value: "eng", label: "English" }, { value: "hin", label: "Hindi" }, { value: "spa", label: "Spanish" }, { value: "fra", label: "French" }] }],
+    fields: [
+      { name: "lang", label: "Language", type: "select", default: "eng",
+        options: [{ value: "eng", label: "English" }, { value: "hin", label: "Hindi" }, { value: "spa", label: "Spanish" }, { value: "fra", label: "French" }] },
+      { name: "out", label: "Output", type: "radio", default: "pdf",
+        options: [{ value: "pdf", label: "Searchable PDF", hint: "Original pages plus an invisible text layer you can search and copy" },
+                  { value: "txt", label: "Text file (.txt)", hint: "Only the recognised text" }] },
+    ],
     async run(ctx) {
       if (!window.Tesseract) {
         await new Promise((res, rej) => {
           const s = document.createElement("script");
-          s.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+          s.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
           s.onload = res; s.onerror = rej; document.head.appendChild(s);
         });
       }
+      const wantPdf = ctx.opts.out !== "txt";
       const buf = await H.readBuf(ctx.files[0]);
       const pdf = await H.loadPdfjs(buf);
+      ctx.status(H.T("Loading OCR engine…")); ctx.progress(3);
+      const worker = await window.Tesseract.createWorker(ctx.opts.lang);
       let text = "";
-      for (let i = 1; i <= pdf.numPages; i++) {
-        ctx.status(H.TF("OCR page {i} / {n}", { i: i, n: pdf.numPages }));
-        ctx.progress((i / pdf.numPages) * 95);
-        const canvas = await H.renderPage(pdf, i, 2);
-        const { data } = await window.Tesseract.recognize(canvas, ctx.opts.lang);
-        text += data.text + "\n\n";
+      let outDoc = null, skipped = 0;
+      if (wantPdf) outDoc = await PL().PDFDocument.load(buf, { ignoreEncryption: true });
+      try {
+        for (let i = 1; i <= pdf.numPages; i++) {
+          ctx.status(H.TF("OCR page {i} / {n}", { i: i, n: pdf.numPages }));
+          ctx.progress(3 + (i / pdf.numPages) * 90);
+          if (wantPdf) {
+            // page already has real text (born-digital) — don't add a duplicate hidden layer
+            const tc = await (await pdf.getPage(i)).getTextContent();
+            if (tc.items.map((it) => it.str).join("").replace(/\s/g, "").length > 40) { skipped++; continue; }
+          }
+          const canvas = await H.renderPage(pdf, i, 2);
+          const { data } = await worker.recognize(canvas, { pdfTextOnly: true }, { text: true, pdf: wantPdf });
+          text += data.text + "\n\n";
+          if (wantPdf && data.pdf && data.text.trim()) {
+            // overlay the invisible text layer onto the ORIGINAL page (vector content kept)
+            const [layer] = await outDoc.embedPdf(new Uint8Array(data.pdf));
+            const page = outDoc.getPage(i - 1);
+            const box = page.getCropBox();
+            const rot = ((page.getRotation().angle % 360) + 360) % 360;
+            const W = box.width, Hh = box.height, x0 = box.x, y0 = box.y;
+            const D = PL().degrees;
+            const place = {
+              0:   { x: x0,     y: y0,      width: W,  height: Hh, rotate: D(0) },
+              90:  { x: x0 + W, y: y0,      width: Hh, height: W,  rotate: D(90) },
+              180: { x: x0 + W, y: y0 + Hh, width: W,  height: Hh, rotate: D(180) },
+              270: { x: x0,     y: y0 + Hh, width: Hh, height: W,  rotate: D(270) },
+            }[rot] || { x: x0, y: y0, width: W, height: Hh };
+            page.drawPage(layer, place);
+          }
+        }
+      } finally { await worker.terminate(); }
+      ctx.progress(97);
+      if (wantPdf) {
+        return { blob: blobFrom(await outDoc.save()), filename: baseName(ctx.files[0].name) + "-searchable.pdf",
+          note: H.T("Searchable PDF ready. Your pages are unchanged; the recognised text sits invisibly behind them.") +
+            (skipped ? " " + H.TF("Pages that already had text were left as they were: {n}.", { n: skipped }) : "") };
       }
       return { blob: new Blob([text], { type: "text/plain" }),
         filename: baseName(ctx.files[0].name) + "-ocr.txt", type: "text/plain",
-        note: "Recognized text extracted. (Searchable-PDF output coming soon.)" };
+        note: H.T("Recognised text extracted.") };
     },
   });
 
@@ -929,12 +968,114 @@
         note: "Form fields flattened into the page." };
     },
   });
-  // Password protect / unlock are not supported by the conversion API; coming via qpdf worker route.
-  function comingSoon(msg) {
-    return { multiple: false, engine: "server", cta: "Process", async run() { throw new Error(msg); } };
+  /* Password protect / unlock — qpdf compiled to WebAssembly, runs in the
+     browser (self-hosted in assets/vendor/qpdf, loaded on first use). */
+  let qpdfFactory = null;
+  function qpdfBase() {
+    const s = document.querySelector('script[src*="assets/js/tools.js"]');
+    return s ? s.src.replace(/assets\/js\/tools\.js.*$/, "assets/vendor/qpdf/") : "/assets/vendor/qpdf/";
   }
-  R("protect", comingSoon("Password protection is coming soon."));
-  R("unlock", comingSoon("Password removal is coming soon."));
+  async function loadQpdf() {
+    if (qpdfFactory) return qpdfFactory;
+    await new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = qpdfBase() + "qpdf.js";
+      s.onload = res; s.onerror = () => rej(new Error(H.T("Could not load the encryption engine — check your connection and retry.")));
+      document.head.appendChild(s);
+    });
+    qpdfFactory = window.Module; // the qpdf.js build exposes its factory as a global "Module"
+    return qpdfFactory;
+  }
+  // Run one qpdf command on a fresh instance. Returns {code, out, err, fs}.
+  async function runQpdf(args, inputBytes) {
+    const factory = await loadQpdf();
+    let out = "", err = "";
+    const q = await factory({
+      locateFile: (f) => qpdfBase() + f,
+      print: (t) => { out += t + "\n"; }, printErr: (t) => { err += t + "\n"; },
+    });
+    q.FS.writeFile("/in.pdf", inputBytes);
+    let code;
+    try { code = q.callMain(args); }
+    catch (e) { code = (e && typeof e.status === "number") ? e.status : 2; if (!(e && "status" in e)) err += String(e && e.message || e); }
+    return { code, out, err, q };
+  }
+  // 0 = needs an open password, 2 = not encrypted, 3 = encrypted but opens without one
+  async function pdfStatus(bytes) {
+    await H.loadLibs();
+    try { await PL().PDFDocument.load(bytes.slice(), { updateMetadata: false }); return 2; }
+    catch (e) { if (!/encrypt/i.test(String(e && (e.name + e.message)))) return 2; }
+    try { const d = await H.loadPdfjs(bytes.slice()); d.destroy(); return 3; }
+    catch (e) { return (e && e.name === "PasswordException") ? 0 : 3; }
+  }
+  async function passwordOk(bytes, pw) {
+    try { const d = await window.pdfjsLib.getDocument({ data: bytes.slice(), password: pw }).promise; d.destroy(); return true; }
+    catch (e) { return !(e && e.name === "PasswordException"); }
+  }
+  function randomPassword() {
+    const a = new Uint8Array(18); crypto.getRandomValues(a);
+    return Array.from(a, (b) => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  R("protect", {
+    multiple: false, cta: "Protect PDF", engine: "client",
+    fields: [
+      { name: "pw", label: "Password", type: "password", placeholder: "Password needed to open the PDF" },
+      { name: "pw2", label: "Repeat password", type: "password" },
+      { name: "allowPrint", label: "Allow printing", type: "checkbox", default: true },
+      { name: "allowCopy", label: "Allow copying text and images", type: "checkbox", default: true },
+      { name: "allowEdit", label: "Allow editing and form filling", type: "checkbox", default: true },
+      { name: "owner", label: "Permissions password (optional)", type: "password",
+        hint: "Needed to change the restrictions later. Leave empty to use a random one." },
+    ],
+    async run(ctx) {
+      const o = ctx.opts;
+      if (!o.pw) throw new Error(H.T("Enter a password."));
+      if (o.pw !== o.pw2) throw new Error(H.T("The two passwords do not match."));
+      ctx.status(H.T("Loading encryption engine…")); ctx.progress(15);
+      const bytes = new Uint8Array(await H.readBuf(ctx.files[0]));
+      const st = await pdfStatus(bytes);
+      if (st === 0 || st === 3) throw new Error(H.T("This PDF is already protected. Unlock it first, then protect it again."));
+      ctx.status(H.T("Encrypting…")); ctx.progress(55);
+      const owner = o.owner || randomPassword();
+      const args = ["--encrypt", "--user-password=" + o.pw, "--owner-password=" + owner, "--bits=256"];
+      if (!o.allowPrint) args.push("--print=none");
+      if (!o.allowCopy) args.push("--extract=n");
+      if (!o.allowEdit) args.push("--modify=none");
+      args.push("--", "/in.pdf", "/out.pdf");
+      const r = await runQpdf(args, bytes);
+      if (r.code !== 0 && r.code !== 3) throw new Error(H.T("Could not encrypt this PDF. Try Repair PDF first."));
+      const outBytes = r.q.FS.readFile("/out.pdf");
+      ctx.progress(100);
+      return { blob: blobFrom(outBytes), filename: baseName(ctx.files[0].name) + "-protected.pdf",
+        note: H.T("Encrypted with AES-256. Keep the password safe — it cannot be recovered.") };
+    },
+  });
+
+  R("unlock", {
+    multiple: false, cta: "Unlock PDF", engine: "client",
+    fields: [
+      { name: "pw", label: "Current password", type: "password",
+        hint: "Needed only if the PDF asks for a password when you open it." },
+    ],
+    async run(ctx) {
+      ctx.status(H.T("Loading encryption engine…")); ctx.progress(15);
+      const bytes = new Uint8Array(await H.readBuf(ctx.files[0]));
+      const st = await pdfStatus(bytes);
+      if (st === 2) throw new Error(H.T("This PDF is not password-protected — there is nothing to remove."));
+      if (st === 0 && !ctx.opts.pw) throw new Error(H.T("This PDF needs its open password. Enter it above and try again."));
+      if (st === 0 && !(await passwordOk(bytes, ctx.opts.pw))) throw new Error(H.T("Wrong password — the file was not unlocked."));
+      ctx.status(H.T("Removing protection…")); ctx.progress(55);
+      const args = ["--decrypt", "/in.pdf", "/out.pdf"];
+      if (ctx.opts.pw) args.unshift("--password=" + ctx.opts.pw);
+      const r = await runQpdf(args, bytes);
+      if (r.code !== 0 && r.code !== 3) throw new Error(H.T("Could not unlock this PDF. Try Repair PDF first."));
+      const outBytes = r.q.FS.readFile("/out.pdf");
+      ctx.progress(100);
+      return { blob: blobFrom(outBytes), filename: baseName(ctx.files[0].name) + "-unlocked.pdf",
+        note: H.T("Password and restrictions removed.") };
+    },
+  });
 
   /* =========================================================================
      SERVER CONVERSIONS — via Cloudflare Worker proxy → CloudConvert.

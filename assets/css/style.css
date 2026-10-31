@@ -328,3 +328,30 @@ body.nav-tight .menu-btn { display: block; }
 /* troubleshooting list */
 .prose dl.ts dt { font-weight: 700; margin-top: 14px; }
 .prose dl.ts dd { margin: 4px 0 0; color: var(--ink-soft); }
+
+/* ---- guides (/guides/) ---- */
+.guide { max-width: 760px; margin: 26px auto 0; }
+.guide h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.2; margin: 6px 0 14px; color: var(--ink); }
+.guide-by { margin: 0 0 18px; max-width: none; }
+.guide-summary { font-size: 1.08rem; line-height: 1.6; color: var(--ink); background: var(--green-light); border-left: 4px solid var(--green); padding: 14px 18px; border-radius: var(--radius-sm); margin: 0 0 20px; }
+.toc { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--card); padding: 14px 18px; margin: 0 0 8px; font-size: .95rem; }
+.toc ol { margin: 8px 0 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; }
+.guide-body { margin-top: 20px; }
+.prose h3 { color: var(--ink); font-size: 1.08rem; margin: 22px 0 8px; }
+.prose table { width: 100%; border-collapse: collapse; margin: 6px 0 18px; font-size: .94rem; display: block; overflow-x: auto; }
+.prose th, .prose td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+.prose th { background: var(--bg); color: var(--ink); }
+.prose code { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: .9em; }
+.guide-tools { max-width: none; }
+.guide-tools h2, .sources h2, .guide .faq h2 { font-size: 1.3rem; color: var(--ink); margin: 30px 0 12px; }
+.guide .faq { max-width: none; margin: 20px 0; }
+.sources ul { padding-left: 22px; font-size: .93rem; display: flex; flex-direction: column; gap: 6px; }
+.guide-note { font-size: .88rem; margin-top: 24px; }
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; max-width: 1000px; margin: 20px auto; }
+.guide-card { display: flex; flex-direction: column; gap: 8px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; color: var(--ink-soft); transition: .15s; }
+.guide-card:hover { text-decoration: none; box-shadow: var(--shadow); transform: translateY(-2px); }
+.guide-card h3 { margin: 0; font-size: 1.05rem; color: var(--ink); line-height: 1.35; }
+.guide-card p { margin: 0; font-size: .9rem; line-height: 1.5; }
+.guide-card .muted { font-size: .8rem; margin-top: auto; }
+.tool-guides { max-width: 760px; margin: 10px auto 0; font-size: .95rem; }
+.tool-guides ul { padding-left: 22px; }

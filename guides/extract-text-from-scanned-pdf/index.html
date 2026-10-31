@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Extract Text from a Scanned PDF: OCR Accuracy Tips | PDFora</title>
+<meta name="description" content="Tell scanned and digital PDFs apart, pick PDF to Text or OCR, prepare scans for better accuracy, choose searchable PDF or .txt, and proofread numbers.">
+<link rel="canonical" href="https://getpdfora.com/guides/extract-text-from-scanned-pdf/">
+<meta property="og:title" content="Extract Text from a Scanned PDF: OCR Accuracy Tips | PDFora">
+<meta property="og:description" content="Tell scanned and digital PDFs apart, pick PDF to Text or OCR, prepare scans for better accuracy, choose searchable PDF or .txt, and proofread numbers.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://getpdfora.com/guides/extract-text-from-scanned-pdf/">
+<meta property="og:site_name" content="PDFora">
+<meta property="og:image" content="https://getpdfora.com/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#2b9348">
+<meta name="google-adsense-account" content="ca-pub-2486815067496922">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/img/favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicon-192.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to Extract Text from a Scanned PDF Accurately","description":"Tell scanned and digital PDFs apart, pick PDF to Text or OCR, prepare scans for better accuracy, choose searchable PDF or .txt, and proofread numbers.","image":"https://getpdfora.com/assets/img/og.png","datePublished":"2026-10-31","dateModified":"2026-10-31","wordCount":1508,"inLanguage":"en","mainEntityOfPage":"https://getpdfora.com/guides/extract-text-from-scanned-pdf/","author":{"@type":"Person","name":"Toofan Singh","url":"https://getpdfora.com/author/toofan-singh/","image":"https://getpdfora.com/assets/img/author/toofan-singh.jpg","jobTitle":"Founder","worksFor":{"@type":"Organization","name":"PDFora","url":"https://getpdfora.com/"},"sameAs":["https://uzbekistanwanderer.com/author/toofan-singh/"]},"publisher":{"@type":"Organization","name":"PDFora","url":"https://getpdfora.com/","logo":{"@type":"ImageObject","url":"https://getpdfora.com/assets/img/favicon-512.png"}}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://getpdfora.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://getpdfora.com/guides/"},{"@type":"ListItem","position":3,"name":"How to Extract Text from a Scanned PDF Accurately","item":"https://getpdfora.com/guides/extract-text-from-scanned-pdf/"}]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does PDF to Text give me an empty file?","acceptedAnswer":{"@type":"Answer","text":"The pages are images with no stored characters, which is typical of scans and phone photos. Run OCR PDF on the file instead."}},{"@type":"Question","name":"Does OCR change how my document looks?","acceptedAnswer":{"@type":"Answer","text":"Not with searchable-PDF output: the original page images stay, and the recognised text sits invisibly behind them. The .txt output contains only the words, with no layout."}},{"@type":"Question","name":"Which languages can PDFora's OCR read?","acceptedAnswer":{"@type":"Answer","text":"English, Hindi, Spanish and French. Choose the language of the document before running it; a page in a language that is not selected will be read poorly."}},{"@type":"Question","name":"Is my scan uploaded anywhere?","acceptedAnswer":{"@type":"Answer","text":"No. OCR PDF runs Tesseract.js in your browser. The first run downloads the engine and language data, but your PDF stays on your device."}},{"@type":"Question","name":"Can OCR read handwritten notes?","acceptedAnswer":{"@type":"Answer","text":"Rarely well. The engine is designed for printed text, so expect handwriting to come out garbled and plan to transcribe it yourself."}},{"@type":"Question","name":"Will compressing the PDF afterwards keep the text searchable?","acceptedAnswer":{"@type":"Answer","text":"No. Compress PDF turns pages into images, which removes the text layer. Compress first, then run OCR on the smaller file."}}]}</script>
+</head>
+<body>
+<header class="site-head"><div class="wrap">
+<a class="brand" href="../../"><span class="logo">P</span>PDFora</a>
+<nav class="nav"><a href="../../#organize">Organize</a><a href="../../#optimize">Optimize</a><a href="../../#convert-to">Convert to PDF</a><a href="../../#convert-from">Convert from PDF</a><a href="../../#edit">Edit &amp; Sign</a><a href="../../#security">Security</a><a href="../../#automate">Automate</a></nav>
+<button class="menu-btn" aria-label="Menu">☰</button>
+<div class="head-cta"><a href="../../pricing/" style="font-weight:600;color:var(--ink-soft);padding:8px 10px">Pricing</a>
+<select class="lang-sel" aria-label="Language" onchange="location.href=this.value"><option value="../../" selected>English</option><option value="../../ar/">العربية</option><option value="../../id/">Bahasa Indonesia</option><option value="../../de/">Deutsch</option><option value="../../da/">Dansk</option><option value="../../cs/">Čeština</option><option value="../../es/">Español</option><option value="../../el/">Ελληνικά</option><option value="../../fr/">Français</option><option value="../../it/">Italiano</option><option value="../../ja/">日本語</option><option value="../../ko/">한국어</option><option value="../../zh-hans/">简体中文</option><option value="../../zh-hant/">繁體中文</option><option value="../../hi/">हिन्दी</option><option value="../../he/">עברית</option><option value="../../hu/">Magyar</option><option value="../../nl/">Nederlands</option><option value="../../nb/">Norsk</option><option value="../../pl/">Polski</option><option value="../../pt/">Português</option><option value="../../ro/">Română</option><option value="../../ru/">Русский</option><option value="../../fi/">Suomi</option><option value="../../sv/">Svenska</option><option value="../../th/">ภาษาไทย</option><option value="../../vi/">Tiếng Việt</option><option value="../../tr/">Türkçe</option><option value="../../uk/">Українська</option></select>
+<a class="btn" href="../../#all">All tools</a></div>
+</div></header>
+<main><div class="wrap"><article class="guide">
+<div class="breadcrumb"><a href="../../">Home</a> › <a href="../">Guides</a></div>
+<h1>How to Extract Text from a Scanned PDF Accurately</h1>
+<div class="byline guide-by"><img src="../../assets/img/author/toofan-singh-160.jpg" width="44" height="44" alt="Toofan Singh" loading="lazy" decoding="async"><span>By <a href="../../author/toofan-singh/" rel="author">Toofan Singh</a> · <time datetime="2026-10-31">31 October 2026</time> · 7 min read</span></div>
+<p class="guide-summary">If a PDF has a text layer, PDF to Text copies it exactly; if it is a scan, you need OCR. Rotate, deskew and crop the scan first, pick the right language, then choose a searchable PDF for keeping or a .txt file for reuse. Always proofread numbers, because OCR confuses look-alike characters: a 7 read as a 1, or the letter O read as a zero.</p>
+<nav class="toc" aria-label="Contents"><strong>In this guide</strong><ol><li><a href="#scanned-or-digital-find-out-first">Scanned or digital: find out first</a></li><li><a href="#pdf-to-text-or-ocr-pdf">PDF to Text or OCR PDF?</a></li><li><a href="#prepare-the-scan-before-you-run-ocr">Prepare the scan before you run OCR</a></li><li><a href="#searchable-pdf-or-plain-text">Searchable PDF or plain text?</a></li><li><a href="#proofread-the-numbers-every-time">Proofread the numbers, every time</a></li><li><a href="#what-ocr-still-cannot-do-well">What OCR still cannot do well</a></li><li><a href="#a-short-routine-that-works">A short routine that works</a></li></ol></nav>
+<div class="prose guide-body"><h2 id="scanned-or-digital-find-out-first">Scanned or digital: find out first</h2>
+<p>Two PDFs can look identical on screen and be completely different inside. A <strong>digital PDF</strong>, created by "Save as PDF" in an office suite, a web browser or a billing system, stores real characters with their positions. A <strong>scanned PDF</strong> stores a photograph of each page; the "text" is just pixels shaped like letters. Which kind you have decides which tool you need, so spend thirty seconds checking:</p>
+<ul>
+<li><strong>Search for a word you can see.</strong> Press Ctrl+F (Cmd+F on a Mac) and type a word from the page. No match on a page that plainly contains it means there is no text layer.</li>
+<li><strong>Try to select a sentence.</strong> In a digital PDF the cursor highlights words line by line. In a scan it draws a box around part of the picture, or selects the whole page as one image.</li>
+<li><strong>Zoom in to 400%.</strong> Digital text stays crisp at any zoom. Scanned text turns soft or blocky, and you may see paper texture, specks or a grey edge.</li>
+<li><strong>Run <a href="/pdf-to-text/">PDF to Text</a>.</strong> Pages that come back blank are images.</li>
+</ul>
+<p>Watch for mixed files. A contract may be digital except for a scanned signature page, and many office scanners already add a rough text layer of their own. If PDF to Text returns garbled words for a page that looks clean, the scanner's recognition was poor and running OCR again will usually do better.</p>
+
+<h2 id="pdf-to-text-or-ocr-pdf">PDF to Text or OCR PDF?</h2>
+<p>The two tools answer different questions. PDF to Text <em>reads</em> characters that already exist. OCR PDF <em>recognises</em> characters in an image, which is slower and never perfect.</p>
+<table>
+<thead><tr><th></th><th>PDF to Text</th><th>OCR PDF</th></tr></thead>
+<tbody>
+<tr><td>Works on</td><td>Digital PDFs with a text layer</td><td>Scans, phone photos, image-only PDFs</td></tr>
+<tr><td>How it gets the text</td><td>Copies stored characters</td><td>Recognises letter shapes with Tesseract.js</td></tr>
+<tr><td>Accuracy</td><td>Exact, as stored</td><td>Depends on scan quality; needs proofreading</td></tr>
+<tr><td>Speed</td><td>Fast, even for long files</td><td>Several seconds per page or more</td></tr>
+<tr><td>Output</td><td>.txt file</td><td>Searchable PDF or .txt file</td></tr>
+<tr><td>Where it runs</td><td>In your browser</td><td>In your browser</td></tr>
+</tbody>
+</table>
+<p>Always try PDF to Text first on anything you did not scan yourself. If it returns clean text, you are done, and the result is more reliable than any OCR could be.</p>
+
+<h2 id="prepare-the-scan-before-you-run-ocr">Prepare the scan before you run OCR</h2>
+<p>OCR accuracy is decided mostly before recognition starts. The Tesseract project, whose engine PDFora runs in the browser, lists the main factors in its guide to <a href="https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html">improving recognition quality</a>: resolution, skewed lines, dark borders, noise and uneven backgrounds. Most of them can be dealt with in a few minutes.</p>
+<ol>
+<li><strong>Fix sideways and upside-down pages.</strong> Use <a href="/rotate-pdf/">Rotate PDF</a> with a page range (for example <code>3,7-9</code>) to turn only the pages that need it by 90, 180 or 270 degrees. A page read on its side produces nonsense.</li>
+<li><strong>Straighten crooked pages.</strong> Tesseract's documentation notes that heavy skew seriously harms its ability to split the page into lines. <a href="/deskew-pdf/">Deskew</a> detects tilts between −6 and +6 degrees in half-degree steps and turns each page level. It rebuilds the pages as images, which is fine at this stage because a scan has no useful text layer yet.</li>
+<li><strong>Remove dark margins.</strong> Scanner lids leave grey or black strips, and punched holes and staples sit at the edges. The Tesseract guide warns that such borders can be misread as characters. <a href="/crop-pdf/">Crop PDF</a> trims the same margin from every side, set in points: the default of 30 points is 30/72 of an inch, about 10.6 mm. Check that the crop does not clip page numbers or marginal notes you need.</li>
+<li><strong>Get the contrast right at the scanner.</strong> PDFora has no contrast adjustment, so this belongs at capture time. Use the scanner's document or text mode, scan on a white background and avoid shadows when photographing. Faint pencil, carbon copies, faxes and coloured paper are the usual problem cases; rescanning a little darker often helps more than anything done afterwards.</li>
+<li><strong>Pick the right language.</strong> OCR PDF offers English, Hindi, Spanish and French. The language chooses which of Tesseract's <a href="https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html">trained data files</a> reads the page, so French read as English tends to lose its accents and misread words, and Hindi read as English fails entirely.</li>
+</ol>
+<p>A sensible order is rotate, then deskew, then crop, then OCR, so each step works on a page the previous one has already tidied.</p>
+<h3>Resolution: what the numbers mean</h3>
+<p>Tesseract's documentation says it works best on images of at least 300 dpi. PDFora's OCR renders each page at about 144 dpi before recognition, which keeps it fast enough to run on a phone. Here is what that means for text size: a line of 10-point type is 10/72 of an inch tall, which is 20 pixels at 144 dpi, enough for clean body text. A 6-point footnote is only 12 pixels tall at the same setting, and that is where errors creep in. If small print matters, scan it as cleanly as you can and proofread it with extra care, or use desktop OCR software that works at a higher resolution for those pages.</p>
+<p>Scanning at 300 dpi is still worth doing. A sharp, clean original survives rendering far better than a blurry, low-resolution phone picture, and it gives you a good archive copy either way.</p>
+
+<h2 id="searchable-pdf-or-plain-text">Searchable PDF or plain text?</h2>
+<p>OCR PDF can give you either output. Choose by what you will do next.</p>
+<ul>
+<li><strong>Searchable PDF</strong> keeps the original page images and adds an invisible layer of recognised text behind them. The document looks exactly as before, but you can search it, select a sentence and copy it. This is the better choice for records, archives and anything you will send to someone else, because the reader still sees the real page, signatures and stamps included, and can check any word against the image.</li>
+<li><strong>Plain .txt</strong> gives you only the words, page after page, with no layout. Pick it when you want to paste the text into an email or document, edit it, count words, translate it or feed it to a script.</li>
+</ul>
+<p>One sequencing trap: Compress PDF turns pages into JPEG images, which removes any text layer. If you need a smaller searchable file, compress first and run OCR on the compressed copy, rather than the other way round.</p>
+
+<h2 id="proofread-the-numbers-every-time">Proofread the numbers, every time</h2>
+<p>OCR errors in prose are easy to spot because the sentence stops making sense. Errors in figures are not: a misread digit still looks like a perfectly normal number. These confusions are the most common ones to look out for:</p>
+<table>
+<thead><tr><th>Looks like</th><th>May really be</th><th>Where it bites</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>7, l (lower-case L), I</td><td>Amounts, dates, reference numbers</td></tr>
+<tr><td>0</td><td>8, O, D</td><td>Totals, account and invoice numbers</td></tr>
+<tr><td>O</td><td>0</td><td>Postcodes and codes that mix letters and digits</td></tr>
+<tr><td>5</td><td>S, 6</td><td>Quantities, model numbers</td></tr>
+<tr><td>8</td><td>B, 3</td><td>Serial numbers, part codes</td></tr>
+<tr><td>. (point)</td><td>, (comma)</td><td>Decimal and thousands separators</td></tr>
+<tr><td>m</td><td>rn</td><td>Names and words, rather than figures</td></tr>
+</tbody>
+</table>
+<p>A practical way to proofread:</p>
+<ul>
+<li><strong>Search inside number fields for letters.</strong> Look for <code>O</code>, <code>l</code>, <code>I</code>, <code>S</code> and <code>B</code> sitting among digits; they are almost always errors.</li>
+<li><strong>Re-add the totals.</strong> If line items no longer add up to the printed total, at least one figure was misread.</li>
+<li><strong>Compare against the image.</strong> With a searchable PDF, select the suspect number and look at the page beneath it. With a .txt file, keep the scan open side by side.</li>
+<li><strong>Be extra careful with codes.</strong> The Tesseract guide notes that its built-in word lists can work against text that is not ordinary words, such as codes and price lists, so reference numbers and product codes deserve a second look.</li>
+</ul>
+
+<h2 id="what-ocr-still-cannot-do-well">What OCR still cannot do well</h2>
+<ul>
+<li><strong>Handwriting.</strong> Tesseract is built for printed type. Neat block capitals sometimes come through; joined-up handwriting mostly does not. Plan to transcribe handwritten notes by hand.</li>
+<li><strong>Tables.</strong> The text in each cell is usually recognised, but the grid is not. In the output, cells come out as runs of words and numbers on a line, and wide tables may interleave columns. Expect to rebuild the table yourself.</li>
+<li><strong>Multi-column layouts.</strong> Newspapers and journals can have their columns read in the wrong order, especially when the columns are close together.</li>
+<li><strong>Mixed scripts.</strong> Each run uses one language. A Hindi letter with English addresses will have one part read well and the other badly. Run the file once per language and take each part from the run that read it correctly.</li>
+<li><strong>Stamps, signatures and watermarks.</strong> These overlap the text and turn into stray characters or swallow the words under them.</li>
+<li><strong>Speed.</strong> Recognition runs on your device, and the first run also downloads the engine and language data, so a long document on a phone can take minutes.</li>
+</ul>
+
+<h2 id="a-short-routine-that-works">A short routine that works</h2>
+<ol>
+<li>Run PDF to Text; if it returns clean text, stop there.</li>
+<li>Otherwise rotate, deskew and crop the scan.</li>
+<li>Run <a href="/ocr-pdf/">OCR PDF</a> in the document's language, choosing a searchable PDF for keeping or sharing, or .txt for reuse.</li>
+<li>Proofread every name, date, amount and reference number against the page image before you rely on it.</li>
+</ol></div>
+<section class="related guide-tools"><h2>Tools used in this guide</h2><div class="grid"><a class="tool-card" href="../../ocr-pdf/"><span class="ic">👁️</span><span><h3>OCR PDF</h3><p>Make scanned PDFs searchable.</p></span></a><a class="tool-card" href="../../pdf-to-text/"><span class="ic">🔤</span><span><h3>PDF to Text</h3><p>Extract plain text from a PDF.</p></span></a><a class="tool-card" href="../../deskew-pdf/"><span class="ic">🧭</span><span><h3>Deskew</h3><p>Straighten crooked scans.</p></span></a><a class="tool-card" href="../../rotate-pdf/"><span class="ic">🔄</span><span><h3>Rotate PDF</h3><p>Rotate pages permanently.</p></span></a><a class="tool-card" href="../../crop-pdf/"><span class="ic">🔲</span><span><h3>Crop PDF</h3><p>Trim page margins.</p></span></a></div></section>
+<section class="faq"><h2>Frequently asked questions</h2><details><summary>Why does PDF to Text give me an empty file?</summary><p>The pages are images with no stored characters, which is typical of scans and phone photos. Run OCR PDF on the file instead.</p></details><details><summary>Does OCR change how my document looks?</summary><p>Not with searchable-PDF output: the original page images stay, and the recognised text sits invisibly behind them. The .txt output contains only the words, with no layout.</p></details><details><summary>Which languages can PDFora&#x27;s OCR read?</summary><p>English, Hindi, Spanish and French. Choose the language of the document before running it; a page in a language that is not selected will be read poorly.</p></details><details><summary>Is my scan uploaded anywhere?</summary><p>No. OCR PDF runs Tesseract.js in your browser. The first run downloads the engine and language data, but your PDF stays on your device.</p></details><details><summary>Can OCR read handwritten notes?</summary><p>Rarely well. The engine is designed for printed text, so expect handwriting to come out garbled and plan to transcribe it yourself.</p></details><details><summary>Will compressing the PDF afterwards keep the text searchable?</summary><p>No. Compress PDF turns pages into images, which removes the text layer. Compress first, then run OCR on the smaller file.</p></details></section>
+<section class="sources"><h2>Sources</h2><ul><li><a href="https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html" rel="noopener" target="_blank">Tesseract documentation – Improving the quality of the output</a></li><li><a href="https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html" rel="noopener" target="_blank">Tesseract documentation – Trained data files for each language</a></li></ul></section>
+<p class="guide-note muted">This guide is general information about using PDF files and PDFora's tools, not legal or professional advice. Spotted something out of date? <a href="../../contact/">Tell us</a>.</p>
+</article>
+
+<section class="related"><h2 class="center" style="margin-bottom:16px">More guides</h2><div class="guide-grid"><a class="guide-card" href="../pdf-to-word-formatting/"><h3>Why PDF to Word Messes Up Formatting, and How to Fix It</h3><p>PDF to Word layouts shift because a PDF stores fixed positions, not paragraphs, so the converter has to rebuild structure by guessing. Check whether…</p></a><a class="guide-card" href="../a4-vs-letter-pdf-printing/"><h3>A4 vs US Letter: printing PDFs without clipped edges</h3><p>A4 (210 × 297 mm, 595 × 842 points) is 5.9 mm narrower and 17.6 mm taller than US Letter (8.5 × 11 in, 612 × 792 points), so printing one on the…</p></a><a class="guide-card" href="../bates-numbering-guide/"><h3>Bates Numbering: Prefixes, Sequences and Stamping PDFs</h3><p>A Bates number is a prefix plus a zero-padded running number, such as ABC-000001, that gives every page in a document set its own reference. Choose…</p></a></div></section>
+</div></main>
+<footer class="site-foot"><div class="wrap">
+<div class="foot-grid">
+<div><h4>PDFora</h4><p style="font-size:.9rem;max-width:240px">Files are processed locally in your browser — nothing is uploaded.</p></div>
+<div><h4>Organize</h4><ul><li><a href="../../merge-pdf/">Merge PDF</a></li><li><a href="../../split-pdf/">Split PDF</a></li><li><a href="../../extract-pdf-pages/">Extract Pages</a></li><li><a href="../../delete-pdf-pages/">Delete Pages</a></li><li><a href="../../organize-pdf/">Organize Pages</a></li><li><a href="../../split-pdf-in-half/">Split in Half</a></li></ul></div><div><h4>Optimize</h4><ul><li><a href="../../compress-pdf/">Compress PDF</a></li><li><a href="../../grayscale-pdf/">Grayscale PDF</a></li><li><a href="../../repair-pdf/">Repair PDF</a></li><li><a href="../../ocr-pdf/">OCR PDF</a></li><li><a href="../../deskew-pdf/">Deskew</a></li></ul></div><div><h4>Convert to PDF</h4><ul><li><a href="../../jpg-to-pdf/">JPG / PNG to PDF</a></li><li><a href="../../word-to-pdf/">Word to PDF</a></li><li><a href="../../excel-to-pdf/">Excel to PDF</a></li><li><a href="../../ppt-to-pdf/">PowerPoint to PDF</a></li><li><a href="../../html-to-pdf/">HTML to PDF</a></li></ul></div><div><h4>Convert from PDF</h4><ul><li><a href="../../pdf-to-jpg/">PDF to JPG</a></li><li><a href="../../pdf-to-png/">PDF to PNG</a></li><li><a href="../../pdf-to-text/">PDF to Text</a></li><li><a href="../../pdf-to-word/">PDF to Word</a></li><li><a href="../../pdf-to-excel/">PDF to Excel</a></li><li><a href="../../pdf-to-ppt/">PDF to PowerPoint</a></li></ul></div><div><h4>Edit &amp; Sign</h4><ul><li><a href="../../pdf-editor/">Edit PDF</a></li><li><a href="../../sign-pdf/">Fill &amp; Sign</a></li><li><a href="../../create-pdf-form/">Create Forms</a></li><li><a href="../../watermark-pdf/">Watermark</a></li><li><a href="../../add-page-numbers-to-pdf/">Page Numbers</a></li><li><a href="../../pdf-header-footer/">Header &amp; Footer</a></li></ul></div><div><h4>Security</h4><ul><li><a href="../../protect-pdf/">Protect PDF</a></li><li><a href="../../unlock-pdf/">Unlock PDF</a></li></ul></div><div><h4>Automate</h4><ul><li><a href="../../pdf-workflows/">Workflows</a></li></ul></div>
+</div>
+<div class="lang-links"><span class="ll-label">Language:</span><a class="cur" href="../../" hreflang="en">English</a><a href="../../ar/" hreflang="ar">العربية</a><a href="../../id/" hreflang="id">Bahasa Indonesia</a><a href="../../de/" hreflang="de">Deutsch</a><a href="../../da/" hreflang="da">Dansk</a><a href="../../cs/" hreflang="cs">Čeština</a><a href="../../es/" hreflang="es">Español</a><a href="../../el/" hreflang="el">Ελληνικά</a><a href="../../fr/" hreflang="fr">Français</a><a href="../../it/" hreflang="it">Italiano</a><a href="../../ja/" hreflang="ja">日本語</a><a href="../../ko/" hreflang="ko">한국어</a><a href="../../zh-hans/" hreflang="zh-Hans">简体中文</a><a href="../../zh-hant/" hreflang="zh-Hant">繁體中文</a><a href="../../hi/" hreflang="hi">हिन्दी</a><a href="../../he/" hreflang="he">עברית</a><a href="../../hu/" hreflang="hu">Magyar</a><a href="../../nl/" hreflang="nl">Nederlands</a><a href="../../nb/" hreflang="nb">Norsk</a><a href="../../pl/" hreflang="pl">Polski</a><a href="../../pt/" hreflang="pt">Português</a><a href="../../ro/" hreflang="ro">Română</a><a href="../../ru/" hreflang="ru">Русский</a><a href="../../fi/" hreflang="fi">Suomi</a><a href="../../sv/" hreflang="sv">Svenska</a><a href="../../th/" hreflang="th">ภาษาไทย</a><a href="../../vi/" hreflang="vi">Tiếng Việt</a><a href="../../tr/" hreflang="tr">Türkçe</a><a href="../../uk/" hreflang="uk">Українська</a></div>
+<div class="foot-bottom"><span>© 2026 PDFora · <a href="../../about/">About</a> · <a href="../../contact/">Contact</a> · <a href="../../privacy/">Privacy</a> · <a href="../../terms/">Terms</a> · <a href="../../disclaimer/">Disclaimer</a> · <a href="../../cookie-policy/">Cookies</a> · <a href="../../guides/">Guides</a> · <a href="../../author/toofan-singh/">Author</a></span><span>Built for speed &amp; privacy · client-side</span></div>
+</div></footer>
+<script src="../../assets/js/site.js"></script>
+<script>(function(){var c="ca-pub-2486815067496922";function go(){if(window.__ads)return;window.__ads=1;var s=document.createElement("script");s.async=true;s.crossOrigin="anonymous";s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client="+c;document.head.appendChild(s)}function idle(){("requestIdleCallback" in window)?requestIdleCallback(go,{timeout:2000}):setTimeout(go,300)}if(document.readyState==="complete")idle();else addEventListener("load",idle,{once:true})})();</script>
+</body></html>
