@@ -355,3 +355,14 @@ body.nav-tight .menu-btn { display: block; }
 .guide-card .muted { font-size: .8rem; margin-top: auto; }
 .tool-guides { max-width: 760px; margin: 10px auto 0; font-size: .95rem; }
 .tool-guides ul { padding-left: 22px; }
+
+/* ---- Accessibility floor (Hallmark audit 2026-11-19). Same look; only contrast, field edges and phone width. ---- */
+:root { --muted: #5f6c84; }                                         /* was #8694ab: 3.1:1 on white, now 5.3:1 (4.9:1 on --bg) */
+.btn { background: var(--green-dark); }                              /* white on #2b9348 was 3.9:1; #1f7a39 passes 4.5:1 */
+.btn:hover { background: #18672f; }
+.btn.ghost { background: #fff; }
+.lang-sel, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), textarea, select { border-color: #8591a5; }   /* field edges 3:1 */
+.search-box input { border-color: transparent; }                     /* the search pill keeps its own outline */
+.lang-links { display: flex; flex-wrap: wrap; column-gap: 14px; }   /* 29 language links wrap instead of running 955px off a phone */
+.lang-links a { margin-right: 0; }
+@media (max-width: 440px) { .head-cta .btn { display: none; } }      /* "All tools" = the logo link; the header fits a 320px phone */
